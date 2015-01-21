@@ -40,7 +40,7 @@ class led_matrix:
 
     def brightness(self, lightRatio):
         for i in range(3):
-            # set brightness.
+            # Set brightness.
             self.bus.write_byte(self.I2C_ADDRESS[i], (int(lightRatio * 0x0F)) + 0xE0)
 
     def clear(self):
@@ -48,13 +48,14 @@ class led_matrix:
 
     def send(self):
         # This function get screen_mat and send it.
-        # first off all, cut the main matrix in 3 part 1 for each scenn.
+        # first off all, cut the main matrix in 3 part 1 for each screen.
         mats = numpy.split(self.screen_mat, 3)
         for i in range(3):
             mat = numpy.split(numpy.rot90(mats[i]), 2)
             for y in range(16):
                 line = 0
                 for x in range(8):
+                    # Compute each line value.
                     if mat[1 if (y % 2) else 0][x][(7-(y/2))] > 0:
                         line |= 1 << x
                 if self.mess_send[i][y] != line:
@@ -62,6 +63,7 @@ class led_matrix:
                     self.mess_send[i][y] = line
 
 def main():
+    # This is a simple test function.
     matrix = led_matrix(1.)
     for x in range(1000):
         i = numpy.linspace(0, 1, 24)
@@ -75,7 +77,6 @@ def main():
         matrix.send()
         matrix.brightness(float(x)/1000.)
         matrix.clear()
-        # time.sleep(0.01)
 
 if __name__ == "__main__":
     main()
